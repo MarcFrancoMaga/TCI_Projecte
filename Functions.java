@@ -23,34 +23,36 @@ public class Functions {
     }
 
     public float Entropy(int image_file[][][]) {
-            int total = 0; // FILAS X COLUMNAS
-            float entropy = 0;
-            int[] frequencies = new int[256];
-            
+        int total = 0;
+        float entropy = 0;
+        int[] frequencies = new int[256]; 
+    
         for (int i = 0; i < image_file.length; i++) {
             for (int j = 0; j < image_file[i].length; j++) {
                 for (int k = 0; k < image_file[i][j].length; k++) {
                     int value = image_file[i][j][k];
                     if (value >= 0 && value <= 255) {
                         frequencies[value]++;
-                    }
-                }
-            }
-            //DIVIDIR CADA CASILLA DEL ARRAY ENTRE EL TOTAL 
-            //LUEGO HACER LA FORMULA DE LA ENTROPIA CON CADA CASILLA
-        for (int i = 0; i < image_file.length; i++) {
-            for (int j = 0; j < image_file[i].length; j++) {
-                for (int k = 0; k < image_file[i][j].length; k++) {
-                    if(image_file_new[i][j][k] == 0){
-                        entropy += 0;
-                    }
-                    else{
-                        entropy += (-image_file_new[i][j][k]) * (Math.log(image_file_new[i][j][k]) / Math.log(2));
+                        total++; 
                     }
                 }
             }
         }
+    
+        float[] probabilities = new float[256];
+        for (int i = 0; i < frequencies.length; i++) {
+            if (frequencies[i] > 0) {
+                probabilities[i] = (float) frequencies[i] / total; 
+            }
+        }
+    
+        for (int i = 0; i < probabilities.length; i++) {
+            if (probabilities[i] > 0) {
+                entropy += -probabilities[i] * (Math.log(probabilities[i]) / Math.log(2));
+            }
+        }
+    
         return entropy;
-
     }
+    
 }
