@@ -7,13 +7,25 @@ public class Functions {
     public int[][][] LoadImage(String image_file, int row, int col, int components, int bytes_sample, boolean signed) throws IOException {
         int[][][] image_loaded = new int[components][row][col];
         FileInputStream image_input = new FileInputStream(image_file);
-        System.out.println("Reading File"); 
+        System.out.println("Reading File..."); 
         //component -> row -> column
         for (int i = 0; i < components; i++) {
             for (int j = 0; j < row; j++) {
                 for (int k = 0; k < col; k++) {
-                    int data = image_input.read();
-                    image_loaded[i][j][k] = data; 
+                    if(bytes_sample == 1){
+                        int data = image_input.read();
+                        image_loaded[i][j][k] = data; 
+                    }
+                    if(bytes_sample == 2){
+                        int byte1 = image_input.read();
+                        int byte2 = image_input.read();
+                        if (byte1 == -1 || byte2 == -1) {
+                            throw new IOException("Unexpected end of file");
+                        }
+                        int data = (byte1 << 8) | (byte2 & 0xFF);
+                        image_loaded[i][j][k] = data; 
+
+                    }
                 }
             }
         }
@@ -27,7 +39,7 @@ public class Functions {
         int total = 0;
         float entropy = 0;
         int[] frequencies = new int[256]; 
-        System.out.println("Calculating entropy");
+        System.out.println("Calculating entropy...");
         for (int i = 0; i < image_file.length; i++) {
             for (int j = 0; j < image_file[i].length; j++) {
                 for (int k = 0; k < image_file[i][j].length; k++) {
@@ -57,43 +69,52 @@ public class Functions {
     }
     
     public int[][][] Quantization(int image_file[][][], int q_step, int direction) {
+        int[][][] quantized_image = new int[image_file.length][image_file[0].length][image_file[0][0].length];
         for (int i = 0; i < image_file.length; i++) {
             for (int j = 0; j < image_file[i].length; j++) {
                 for (int k = 0; k < image_file[i][j].length; k++) {
-                    if (q_step >= 1) {
-                        if (direction == 0) {
-                            if (image_file[i][j][k] < 0){
-                                image_file[i][j][k] = (int) Math.floor(Math.abs(image_file[i][j][k]) / q_step);
-                                image_file[i][j][k] *= -1; 
-                            }
-                            else {
-                                image_file[i][j][k] = (int) Math.floor(Math.abs(image_file[i][j][k]) / q_step);
-                            }
-                        }
-                        else {
-                            image_file[i][j][k] =  image_file[i][j][k] * q_step;
-                        }
-                       
-                    } else {
-                        System.out.println("q_step less than 1");
-                    }
-                    
+                    quantized_image[i][j][k] = image_file[i][j][k];
                 }
             }
         }
-        return image_file;
+        System.out.println("Quantizing...");
+        for (int i = 0; i < quantized_image.length; i++) {
+            for (int j = 0; j < quantized_image[i].length; j++) {
+                for (int k = 0; k < quantized_image[i][j].length; k++) {
+                    if (q_step >= 1) {
+                        if (direction == 0) { // Quantizar
+                            if (quantized_image[i][j][k] < 0) {
+                                quantized_image[i][j][k] = (int) Math.floor(Math.abs(quantized_image[i][j][k]) / q_step);
+                                quantized_image[i][j][k] *= -1;
+                            } else {
+                                quantized_image[i][j][k] = (int) Math.floor(Math.abs(quantized_image[i][j][k]) / q_step);
+                            }
+                        } else { // Desquantizar
+                            quantized_image[i][j][k] = quantized_image[i][j][k] * q_step;
+                        }
+                    } else {
+                        System.out.println("q_step less than 1");
+                    }
+                }
+            }
+        }
+        return quantized_image;
     }
     
     public void SaveFile(int image_file[][][], int bytes_sample, boolean signed, String path) {
         try(FileOutputStream image_output = new FileOutputStream(path)) {
-            System.out.println("Saving File");
+            System.out.println("Saving File...");
             for (int i = 0; i < image_file.length; i++) {
                 for (int j = 0; j < image_file[i].length; j++) {
                     for (int k = 0; k < image_file[i][j].length; k++) {
                         int value = image_file[i][j][k];
-
                         if (bytes_sample == 1) {
-                            image_output.write(value);
+                            image_output.write(value & 0xFF);
+                        } else if (bytes_sample == 2) {
+                            byte byte1 = (byte) ((value >> 8) & 0xFF); 
+                            byte byte2 = (byte) (value & 0xFF);  
+                            image_output.write(byte1);
+                            image_output.write(byte2);
                         }
                     }
                 }
@@ -107,11 +128,12 @@ public class Functions {
     public float MSE(int[][][] original_image, int[][][] q_image) {
         int total = 0;
         int count = 0;
-        System.out.println("Calculating MSE");
+        int aux = 0;
+        System.out.println("Calculating MSE...");
         for (int i = 0; i < original_image.length; i++) {
             for (int j = 0; j < original_image[i].length; j++) {
                 for (int k = 0; k < original_image[i][j].length; k++) {
-                    int aux = original_image[i][j][k] - q_image[i][j][k]; 
+                    aux = original_image[i][j][k] - q_image[i][j][k]; 
                     total += Math.pow(aux, 2);
                     count++;
                 }
@@ -120,9 +142,23 @@ public class Functions {
         return (float) total / count;
     }
 
-    public float PSNR(int[][][] original_image, int[][][] q_image, int mse) {
+    public float PSNR(int[][][] original_image, int[][][] q_image, float mse) {
         double result = 0;
+        System.out.println("Calculating PSNR...");
         result = 10 * Math.log10((Math.pow(2, 8) - 1) / mse);
         return (float) result;
+    }
+
+    public int PAE(int[][][] original_image, int[][][] q_image) {
+        int maxValue = 0;
+        System.out.println("Calculating PAE...");
+        for (int i = 0; i < original_image.length; i++) {
+            for (int j = 0; j < original_image[i].length; j++) {
+                for (int k = 0; k < original_image[i][j].length; k++) {
+                    maxValue = Math.max(maxValue, Math.abs(original_image[i][j][k] - q_image[i][j][k]));
+                }
+            }
+        }
+        return maxValue;
     }
 }   

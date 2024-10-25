@@ -1,6 +1,6 @@
 import java.util.Scanner;
 import java.io.IOException;
-
+//Grupo 6
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -18,6 +18,9 @@ public class Main {
         int[][][] image;
         int[][][] quantified_image;
         float entropy = 0;
+        float entropy2;
+        float PSNR, MSE;
+        int PAE;
         String path_file = arguments[0];
         int rows = Integer.parseInt(arguments[1]);
         int columns = Integer.parseInt(arguments[2]);
@@ -29,10 +32,19 @@ public class Main {
         Functions functions = new Functions();
         try {
             image = functions.LoadImage(path_file, rows, columns, components, bytes_sample, signed);
-            //entropy = functions.Entropy(image);
-            quantified_image = functions.Quantization(image, 125, 0);
-            quantified_image = functions.Quantization(quantified_image, 125, 1);
-            functions.SaveFile(quantified_image, 1, false, "../imatges/prueba.raw");
+            quantified_image = functions.Quantization(image, 5, 0);
+            entropy2 = functions.Entropy(quantified_image);
+            MSE = functions.MSE(image, quantified_image);
+            PSNR = functions.PSNR(image, quantified_image, MSE);
+            PAE = functions.PAE(image, quantified_image);
+
+            //functions.SaveFile(quantified_image, 1, false, "../imatges/prueba.raw");
+            System.out.println("Entropy: "+ entropy2);
+            System.out.println("MSE: "+ MSE);
+            System.out.println("PSNR: "+ PSNR);
+            System.out.println("PAE: "+ PAE);
+            System.out.println("--------------------------------------");
+
 
         }        
         catch (IOException e) {
