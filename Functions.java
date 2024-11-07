@@ -134,7 +134,7 @@ public class Functions {
             for (int j = 0; j < original_image[i].length; j++) {
                 for (int k = 0; k < original_image[i][j].length; k++) {
                     aux = original_image[i][j][k] - q_image[i][j][k]; 
-                    total += Math.pow(aux, 2);
+                    total += aux * aux;
                     count++;
                 }
             }
@@ -151,12 +151,19 @@ public class Functions {
 
     public int PAE(int[][][] original_image, int[][][] q_image) {
         int maxValue = 0;
+        int abs_diff = 0;
         System.out.println("Calculating PAE...");
         for (int i = 0; i < original_image.length; i++) {
             for (int j = 0; j < original_image[i].length; j++) {
                 for (int k = 0; k < original_image[i][j].length; k++) {
-                    maxValue = Math.max(maxValue, Math.abs(original_image[i][j][k] - q_image[i][j][k]));
-                }
+                    abs_diff = original_image[i][j][k] - q_image[i][j][k];
+                    if (abs_diff < 0) {
+                        abs_diff = -abs_diff; 
+                    }
+                    
+                    if (abs_diff > maxValue) {
+                        maxValue = abs_diff; 
+                    }                }
             }
         }
         return maxValue;
