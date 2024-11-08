@@ -89,8 +89,8 @@ public class Functions {
                             } else {
                                 quantized_image[i][j][k] = (int) Math.floor(Math.abs(quantized_image[i][j][k]) / q_step);
                             }
-                        } else { // Desquantizar
-                            quantized_image[i][j][k] = quantized_image[i][j][k] * q_step;
+                        } else if (direction == 1) { // Desquantizar
+                            quantized_image[i][j][k] *= q_step;
                         }
                     } else {
                         System.out.println("q_step less than 1");
@@ -145,7 +145,7 @@ public class Functions {
     public float PSNR(int[][][] original_image, int[][][] q_image, float mse) {
         double result = 0;
         System.out.println("Calculating PSNR...");
-        result = 10 * Math.log10((Math.pow(2, 8) - 1) / mse);
+        result = 10 * Math.log10(Math.pow((Math.pow(2, 8) - 1),2) / mse);
         return (float) result;
     }
 
@@ -168,4 +168,10 @@ public class Functions {
         }
         return maxValue;
     }
+
+    public int[][][] WaveletTransform(int[][][] original_image){
+        int[][][] transformed_image = new int[original_image.length][original_image[0].length][original_image[0][0].length];
+        return transformed_image;
+    }
+    
 }   

@@ -18,8 +18,8 @@ public class Main {
         int[][][] image;
         int[][][] quantified_image;
         float entropy = 0;
-        float entropy2;
-        float PSNR, MSE;
+        float PSNR = 0;
+        float MSE = 0;
         int PAE;
         String path_file = arguments[0];
         int rows = Integer.parseInt(arguments[1]);
@@ -33,13 +33,14 @@ public class Main {
         try {
             image = functions.LoadImage(path_file, rows, columns, components, bytes_sample, signed);
             quantified_image = functions.Quantization(image, 5, 0);
-            entropy2 = functions.Entropy(quantified_image);
+            quantified_image = functions.Quantization(quantified_image, 5, 1);
+            entropy = functions.Entropy(quantified_image);
             MSE = functions.MSE(image, quantified_image);
             PSNR = functions.PSNR(image, quantified_image, MSE);
             PAE = functions.PAE(image, quantified_image);
 
             //functions.SaveFile(quantified_image, 1, false, "../imatges/prueba.raw");
-            System.out.println("Entropy: "+ entropy2);
+            System.out.println("Entropy: "+ entropy);
             System.out.println("MSE: "+ MSE);
             System.out.println("PSNR: "+ PSNR);
             System.out.println("PAE: "+ PAE);
