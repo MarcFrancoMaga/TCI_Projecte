@@ -39,16 +39,10 @@ public class Main {
             PSNR = functions.PSNR(image, quantified_image, MSE);
             PAE = functions.PAE(image, quantified_image);
 
-            //functions.SaveFile(quantified_image, 1, false, "../imatges/prueba.raw");
-            System.out.println("Entropy: "+ entropy);
-            System.out.println("MSE: "+ MSE);
-            System.out.println("PSNR: "+ PSNR);
-            System.out.println("PAE: "+ PAE);
-            System.out.println("--------------------------------------");
+            //functions.SaveFile(quantified_image, 1, false, "../imatges/prueba.raw")
 
-
-        }        
-        catch (IOException e) {
+            
+        }catch (IOException e) {
             System.out.println("An error occurred while loading the image: " + e.getMessage());
             e.printStackTrace(); 
         }

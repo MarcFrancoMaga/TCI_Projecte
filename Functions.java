@@ -169,9 +169,29 @@ public class Functions {
         return maxValue;
     }
 
-    public int[][][] WaveletTransform(int[][][] original_image){
-        int[][][] transformed_image = new int[original_image.length][original_image[0].length][original_image[0][0].length];
-        return transformed_image;
-    }
+    public void RHAAR_fwd(int[] input_vector, int[] output_vector){
+        boolean even = true;
+        while(even){
+            if(input_vector.length % 2 != 0){
+                System.out.println("odd vector");
+                even = false;
+            }
+            else {
+                for (int i = 0, j = 0; i < input_vector.length - 1; i += 2, j++) {
+                    output_vector[j] = (input_vector[i] + input_vector[i + 1]) / 2;
+                }
+                for (int i = 0, j = input_vector.length / 2; i < input_vector.length - 1; i += 2, j++) {
+                    output_vector[j] = input_vector[i] - input_vector[i + 1];
+                }
+            }
+        }           
     
+    }
+    public void RHAAR_inv(int[] input_vector, int[] output_vector){
+        if(input_vector.length % 2 != 0){
+            System.out.println("odd vector");
+        }else{
+
+        }
+    }
 }   
