@@ -32,16 +32,21 @@ public class Main {
         Functions functions = new Functions();
         try {
             image = functions.LoadImage(path_file, rows, columns, components, bytes_sample, signed);
-            quantified_image = functions.Quantization(image, 5, 0);
-            quantified_image = functions.Quantization(quantified_image, 5, 1);
-            entropy = functions.Entropy(quantified_image);
-            MSE = functions.MSE(image, quantified_image);
-            PSNR = functions.PSNR(image, quantified_image, MSE);
-            PAE = functions.PAE(image, quantified_image);
+            // quantified_image = functions.Quantization(image, 5, 0);
+            // quantified_image = functions.Quantization(quantified_image, 5, 1);
+            // entropy = functions.Entropy(quantified_image);
+            // MSE = functions.MSE(image, quantified_image);
+            // PSNR = functions.PSNR(image, quantified_image, MSE);
+            // PAE = functions.PAE(image, quantified_image);
 
             //functions.SaveFile(quantified_image, 1, false, "../imatges/prueba.raw")
-
-            
+            int[] input_vector = {1,2,3,4,5,6,7,8};
+            int[] output_vector = new int[input_vector.length];
+            functions.RHAAR_fwd(input_vector, output_vector);
+            System.out.println("Vector de salida transformado:");
+            for (int i = 0; i < output_vector.length; i++) {
+                System.out.print(output_vector[i] + " ");
+            }
         }catch (IOException e) {
             System.out.println("An error occurred while loading the image: " + e.getMessage());
             e.printStackTrace(); 

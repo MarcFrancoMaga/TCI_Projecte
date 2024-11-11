@@ -35,6 +35,30 @@ public class Functions {
         return image_loaded;
     }
 
+    public void SaveFile(int image_file[][][], int bytes_sample, boolean signed, String path) {
+        try(FileOutputStream image_output = new FileOutputStream(path)) {
+            System.out.println("Saving File...");
+            for (int i = 0; i < image_file.length; i++) {
+                for (int j = 0; j < image_file[i].length; j++) {
+                    for (int k = 0; k < image_file[i][j].length; k++) {
+                        int value = image_file[i][j][k];
+                        if (bytes_sample == 1) {
+                            image_output.write(value & 0xFF);
+                        } else if (bytes_sample == 2) {
+                            byte byte1 = (byte) ((value >> 8) & 0xFF); 
+                            byte byte2 = (byte) (value & 0xFF);  
+                            image_output.write(byte1);
+                            image_output.write(byte2);
+                        }
+                    }
+                }
+            }
+            System.out.println("File saved successfully!");
+        } catch (IOException e) {
+            System.err.println("Error saving file: " + e.getMessage());
+        }
+    }
+
     public float Entropy(int image_file[][][]) {
         int total = 0;
         float entropy = 0;
@@ -100,30 +124,6 @@ public class Functions {
         }
         return quantized_image;
     }
-    
-    public void SaveFile(int image_file[][][], int bytes_sample, boolean signed, String path) {
-        try(FileOutputStream image_output = new FileOutputStream(path)) {
-            System.out.println("Saving File...");
-            for (int i = 0; i < image_file.length; i++) {
-                for (int j = 0; j < image_file[i].length; j++) {
-                    for (int k = 0; k < image_file[i][j].length; k++) {
-                        int value = image_file[i][j][k];
-                        if (bytes_sample == 1) {
-                            image_output.write(value & 0xFF);
-                        } else if (bytes_sample == 2) {
-                            byte byte1 = (byte) ((value >> 8) & 0xFF); 
-                            byte byte2 = (byte) (value & 0xFF);  
-                            image_output.write(byte1);
-                            image_output.write(byte2);
-                        }
-                    }
-                }
-            }
-            System.out.println("File saved successfully!");
-        } catch (IOException e) {
-            System.err.println("Error saving file: " + e.getMessage());
-        }
-    }
 
     public float MSE(int[][][] original_image, int[][][] q_image) {
         int total = 0;
@@ -169,29 +169,41 @@ public class Functions {
         return maxValue;
     }
 
-    public void RHAAR_fwd(int[] input_vector, int[] output_vector){
-        boolean even = true;
-        while(even){
-            if(input_vector.length % 2 != 0){
-                System.out.println("odd vector");
-                even = false;
-            }
-            else {
-                for (int i = 0, j = 0; i < input_vector.length - 1; i += 2, j++) {
-                    output_vector[j] = (input_vector[i] + input_vector[i + 1]) / 2;
-                }
-                for (int i = 0, j = input_vector.length / 2; i < input_vector.length - 1; i += 2, j++) {
-                    output_vector[j] = input_vector[i] - input_vector[i + 1];
-                }
-            }
-        }           
-    
+    public void RHAAR_fwd(int[] input_vector, int[] output_vector) {
+        haarTransformRecursiveFWD(input_vector, output_vector, input_vector.length);
     }
-    public void RHAAR_inv(int[] input_vector, int[] output_vector){
-        if(input_vector.length % 2 != 0){
+    
+    private void haarTransformRecursiveFWD(int[] input, int[] output, int length) {
+        if (length % 2 != 0) {
             System.out.println("odd vector");
-        }else{
-
+            return;
+        }
+        
+        int[] aux = new int[length];
+        for (int i = 0; i < length / 2; i++) {
+            aux[i] = (input[2 * i] + input[2 * i + 1]) / 2;
+            aux[length / 2 + i] = Math.abs(input[2 * i] - input[2 * i + 1]);
+        }
+        for (int i = 0; i < aux.length; i++) {
+            output[i] = aux[i];
+        }
+        
+        if (length > 2) {
+            haarTransformRecursiveFWD(output, output, length / 2);
+        }
+    }
+    
+    public void RHAAR_inv(int[] input_vector, int[] output_vector){
+        haarTransformRecursiveINV(input_vector, output_vector, input_vector.length);;
+    }
+    private void haarTransformRecursiveINV(int[] input, int[] output, int length){
+        if (length % 2 != 0) {
+            System.out.println("odd vector");
+            return;
+        }
+        
+        if (length < output.length) {
+            haarTransformRecursiveFWD(output, output, length * 2);
         }
     }
 }   
