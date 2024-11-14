@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Scanner;
 import java.io.IOException;
 //Grupo 6
@@ -42,10 +43,18 @@ public class Main {
             //functions.SaveFile(quantified_image, 1, false, "../imatges/prueba.raw")
             int[] input_vector = {1,2,3,4,5,6,7,8};
             int[] output_vector = new int[input_vector.length];
+            int[] outputput_vector = new int[input_vector.length];
             functions.RHAAR_fwd(input_vector, output_vector);
-            System.out.println("Vector de salida transformado:");
+            System.out.println("Output vector transformed:");
             for (int i = 0; i < output_vector.length; i++) {
                 System.out.print(output_vector[i] + " ");
+            }
+            System.arraycopy(output_vector, 0, outputput_vector, 0, output_vector.length);
+
+            functions.RHAAR_inv(output_vector, outputput_vector);
+            System.out.println("Output vector untransformed:");
+            for (int i = 0; i < outputput_vector.length; i++) {
+                System.out.print(outputput_vector[i] + " ");
             }
         }catch (IOException e) {
             System.out.println("An error occurred while loading the image: " + e.getMessage());

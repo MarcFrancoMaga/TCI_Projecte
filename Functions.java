@@ -1,6 +1,7 @@
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Functions {
 
@@ -181,29 +182,53 @@ public class Functions {
         
         int[] aux = new int[length];
         for (int i = 0; i < length / 2; i++) {
-            aux[i] = (input[2 * i] + input[2 * i + 1]) / 2;
-            aux[length / 2 + i] = Math.abs(input[2 * i] - input[2 * i + 1]);
+            aux[i] = (input[2 * i] + input[2 * i + 1]) / 2; //update
+            aux[length / 2 + i] = Math.abs(input[2 * i] - input[2 * i + 1]); //prediction
         }
         for (int i = 0; i < aux.length; i++) {
             output[i] = aux[i];
         }
-        
         if (length > 2) {
             haarTransformRecursiveFWD(output, output, length / 2);
         }
     }
     
     public void RHAAR_inv(int[] input_vector, int[] output_vector){
-        haarTransformRecursiveINV(input_vector, output_vector, input_vector.length);;
+        haarTransformRecursiveINV(input_vector, output_vector, input_vector.length, 2);
     }
-    private void haarTransformRecursiveINV(int[] input, int[] output, int length){
-        if (length % 2 != 0) {
-            System.out.println("odd vector");
+    private void haarTransformRecursiveINV(int[] input, int[] output, int length, int minValue){
+        if (minValue <= 1){
+            output[0] = input[0];
             return;
         }
-        
-        if (length < output.length) {
-            haarTransformRecursiveFWD(output, output, length * 2);
+        System.out.println("\nInput (at minValue = " + minValue + "): ");
+        for (int i = 0; i < input.length; i++) {
+            System.out.print(input[i] + " ");
+        }
+        int[] aux = new int[length]; //el problema es que no se guardan en orden; Mirar la consola
+        for (int i = 0; i < minValue / 2; i++) {
+            int w = input[minValue / 2 + i];
+            aux[i] = input[i] - (w / 2);
+            aux[minValue / 2 + i] = w + aux[i];
+            System.out.println("\ni: " + i);
+            System.out.println("w: " + w);
+            System.out.println("aux[" + i + "]: " + aux[i]);
+            System.out.println("aux[" + (minValue / 2 + i) + "]: " + aux[minValue / 2 + i]);
+        }
+        System.out.println("\noutput before copy aux: ");
+        for (int i = 0; i < output.length; i++) {
+            System.out.print(output[i] + " ");
+        }
+        System.arraycopy(aux, 0, output, 0, minValue);
+        System.out.println("\nAux: ");
+        for (int i = 0; i < aux.length; i++) {
+            System.out.print(aux[i] + " ");
+        }System.out.println("\noutput after aux: ");
+        for (int i = 0; i < output.length; i++) {
+            System.out.print(output[i] + " ");
+        }
+        if(minValue*2 <= length){
+            haarTransformRecursiveINV(output, input, length, minValue * 2);
         }
     }
 }   
