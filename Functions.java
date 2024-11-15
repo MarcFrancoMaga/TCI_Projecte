@@ -182,8 +182,8 @@ public class Functions {
         
         int[] aux = new int[length];
         for (int i = 0; i < length / 2; i++) {
-            aux[i] = (input[2 * i] + input[2 * i + 1]) / 2; //update
-            aux[length / 2 + i] = Math.abs(input[2 * i] - input[2 * i + 1]); //prediction
+            aux[length / 2 + i] = (input[2 * i + 1] - input[2 * i]); //prediction
+            aux[i] = (input[2 * i] + (aux[length / 2 + i]) / 2); //update
         }
         for (int i = 0; i < aux.length; i++) {
             output[i] = aux[i];
@@ -193,8 +193,9 @@ public class Functions {
         }
     }
     
-    public void RHAAR_inv(int[] input_vector, int[] output_vector){
-        haarTransformRecursiveINV(input_vector, output_vector, input_vector.length, 2); //xSize / 2 / 2 / 2
+    public void RHAAR_inv(int[] input_vector, int[] output_vector, int maxLevels){
+        maxLevels = input_vector.length / (2^maxLevels);
+        haarTransformRecursiveINV(input_vector, output_vector, input_vector.length, maxLevels); //xSize / 2 / 2 / 2
     }
     private void haarTransformRecursiveINV(int[] input, int[] output, int length, int minValue){
         if (minValue <= 1){
@@ -214,5 +215,41 @@ public class Functions {
         if(minValue*2 <= length){
             haarTransformRecursiveINV(output, input, length, minValue * 2);
         }
+    }
+
+    public int[][][] imagePredictor(int[][][] original_image){
+        System.out.println("Predicting...");
+        int[][][] predictedImage = new int[original_image.length][original_image[0].length][original_image[0][0].length];
+        for (int i = 0; i < original_image.length; i++) {
+            for (int j = 0; j < original_image[i].length; j++) {
+                for (int k = 0; k < original_image[i][j].length; k++) {
+                    predictedImage[i][j][k] = original_image[i][j][k];
+                }
+            }
+        }
+        for (int i = 0; i < predictedImage.length; i++) {
+            for (int j = 0; j < predictedImage[i].length; j++) {
+                for (int k = 0; k < predictedImage[i][j].length; k++) {
+                    int leftPixel = 0;
+                    int topPixel = 0;
+                    int diagonalPixel = 0;
+                    if (k > 0) { 
+                        leftPixel = predictedImage[i][j][k - 1];
+                    }
+                    if (j > 0) { 
+                        topPixel = predictedImage[i][j - 1][k];
+                    }
+                    if (j > 0 && k > 0) { 
+                        diagonalPixel = predictedImage[i][j - 1][k - 1];
+                    }
+
+                    int predictedValue = Math.min(leftPixel, Math.min(topPixel, diagonalPixel));
+
+                    int diff = predictedImage[i][j][k] - predictedValue;
+                    predictedImage[i][j][k] += diff;
+                }
+            }
+        }
+        return predictedImage;
     }
 }   

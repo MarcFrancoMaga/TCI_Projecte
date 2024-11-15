@@ -18,6 +18,7 @@ public class Main {
         }
         int[][][] image;
         int[][][] quantified_image;
+        int[][][] predictedImage;
         float entropy = 0;
         float PSNR = 0;
         float MSE = 0;
@@ -41,21 +42,29 @@ public class Main {
             // PAE = functions.PAE(image, quantified_image);
 
             //functions.SaveFile(quantified_image, 1, false, "../imatges/prueba.raw")
+
+            // int maxLevels = Numero maximo de niveles de la wavelet
             int[] input_vector = {1,2,3,4,5,6,7,8};
             int[] output_vector = new int[input_vector.length];
-            int[] outputput_vector = new int[input_vector.length];
-            functions.RHAAR_fwd(input_vector, output_vector);
-            System.out.println("Output vector transformed:");
-            for (int i = 0; i < output_vector.length; i++) {
-                System.out.print(output_vector[i] + " ");
+            // int[] outputput_vector = new int[input_vector.length];
+            // functions.RHAAR_fwd(input_vector, output_vector);
+            // System.arraycopy(output_vector, 0, outputput_vector, 0, output_vector.length);
+            // functions.RHAAR_inv(output_vector, outputput_vector, maxLevels);
+            for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
+                for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
+                    int[] fila = image[i][j];
+                    functions.RHAAR_fwd(fila, fila);
+                }
             }
-            System.arraycopy(output_vector, 0, outputput_vector, 0, output_vector.length);
+            for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
+                for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
+                    int[] fila = image[i][j];
+                    functions.RHAAR_inv(fila, fila,10);
+                }
+            }
+            //predictedImage = functions.imagePredictor(image);
+            functions.SaveFile(image, 1, false, "../imatges/prueba.raw");
 
-            functions.RHAAR_inv(output_vector, outputput_vector);
-            System.out.println("Output vector untransformed:");
-            for (int i = 0; i < outputput_vector.length; i++) {
-                System.out.print(outputput_vector[i] + " ");
-            }
         }catch (IOException e) {
             System.out.println("An error occurred while loading the image: " + e.getMessage());
             e.printStackTrace(); 
