@@ -1,6 +1,5 @@
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.zip.*;
+import java.io.*;
 import java.util.Arrays;
 
 public class Functions {
@@ -170,13 +169,16 @@ public class Functions {
         return maxValue;
     }
 
-    public void RHAAR_fwd(int[] input_vector, int[] output_vector) {
-        haarTransformRecursiveFWD(input_vector, output_vector, input_vector.length);
+    public void RHAAR_fwd(int[] input_vector, int[] output_vector, int maxLevels) {
+        haarTransformRecursiveFWD(input_vector, output_vector, input_vector.length, maxLevels, 1);
     }
     
-    private void haarTransformRecursiveFWD(int[] input, int[] output, int length) {
+    private void haarTransformRecursiveFWD(int[] input, int[] output, int length, int maxLevels, int currentLevel) {
         if (length % 2 != 0) {
             System.out.println("odd vector");
+            return;
+        }
+        if (currentLevel > maxLevels) {
             return;
         }
         
@@ -189,12 +191,12 @@ public class Functions {
             output[i] = aux[i];
         }
         if (length > 2) {
-            haarTransformRecursiveFWD(output, output, length / 2);
+            haarTransformRecursiveFWD(output, output, length / 2,  maxLevels, currentLevel + 1);
         }
     }
     
     public void RHAAR_inv(int[] input_vector, int[] output_vector, int maxLevels){
-        maxLevels = input_vector.length / (2^maxLevels);
+        maxLevels = input_vector.length / (int) (Math.pow(2, maxLevels));
         haarTransformRecursiveINV(input_vector, output_vector, input_vector.length, maxLevels); //xSize / 2 / 2 / 2
     }
     private void haarTransformRecursiveINV(int[] input, int[] output, int length, int minValue){
@@ -202,18 +204,19 @@ public class Functions {
             output[0] = input[0];
             return;
         }
-
         int[] aux = new int[length];
-        for (int i = 0; i < minValue / 2; i++) {
-            int w = input[minValue / 2 + i];
+
+        for (int i = 0; i < minValue; i++) {
+            int w = input[minValue + i];
             aux[2 * i] = input[i] - (w / 2);
             aux[2 * i + 1] = w + aux[2 * i];
+        
         }
         
-        System.arraycopy(aux, 0, output, 0, minValue);
-        
-        if(minValue*2 <= length){
-            haarTransformRecursiveINV(output, input, length, minValue * 2);
+        System.arraycopy(aux, 0, output, 0, length);
+
+        if(minValue*2 < length){
+             haarTransformRecursiveINV(output, input, length, minValue * 2);
         }
     }
 
@@ -251,5 +254,23 @@ public class Functions {
             }
         }
         return predictedImage;
+    }
+
+    public void ZipImage(String imagepath, String zipImagepath) throws IOException {
+        FileOutputStream fos = new FileOutputStream(zipImagepath);
+        ZipOutputStream zipOut = new ZipOutputStream(fos);
+        File imageToZip = new File(imagepath);
+        FileInputStream fis = new FileInputStream(imageToZip);
+        ZipEntry zipEntry = new ZipEntry(imageToZip.getName());
+        zipOut.putNextEntry(zipEntry);
+
+        byte[] bytes = new byte[1024];
+        int length;
+        while((length = fis.read(bytes)) >= 0) {
+            zipOut.write(bytes, 0, length);
+        }
+        zipOut.close();
+        fis.close();
+        fos.close();
     }
 }   
