@@ -45,37 +45,38 @@ public class Main {
             //functions.SaveFile(quantified_image, 1, false, "../imatges/prueba.raw")
 
             // int maxLevels = Numero maximo de niveles de la wavelet
-            int[] input_vector = {1,2,3,4,5,6,7,8};
-            int[] output_vector = new int[input_vector.length];
-            int[] outputput_vector = new int[input_vector.length];
-            functions.RHAAR_fwd(input_vector, output_vector, 1);
-            System.out.println("output");
-            for(int i = 0; i < output_vector.length; i++){
-                System.out.println(output_vector[i]);
-            }
-            System.arraycopy(output_vector, 0, outputput_vector, 0, output_vector.length);
-            functions.RHAAR_inv(output_vector, outputput_vector, 1);
-            System.out.println("outputput");
+            // int[] input_vector = {1,2,3,4,5,6,7,8};
+            // int[] output_vector = new int[input_vector.length];
+            // int[] outputput_vector = new int[input_vector.length];
+            // functions.RHAAR_fwd(input_vector, output_vector, 1);
+            // System.out.println("output");
+            // for(int i = 0; i < output_vector.length; i++){
+            //     System.out.println(output_vector[i]);
+            // }
+            // System.arraycopy(output_vector, 0, outputput_vector, 0, output_vector.length);
+            // functions.RHAAR_inv(output_vector, outputput_vector, 1);
+            // System.out.println("outputput");
 
-            for(int i = 0; i < outputput_vector.length; i++){
-                System.out.println(outputput_vector[i]);
-            }
+            // for(int i = 0; i < outputput_vector.length; i++){
+            //     System.out.println(outputput_vector[i]);
+            // }
 
-            // for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
-            //      for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
-            //          int[] fila = image[i][j];
-            //          functions.RHAAR_fwd(fila, fila, 5);
-            //      }
-            //  }
-            // functions.SaveFile(image, 1, false, "../imatges/prueba1.raw");
-            //  for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
-            //      for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
-            //          int[] fila = image[i][j];
-            //          functions.RHAAR_inv(fila, fila,5);
-            //      }
-            //  }
-            predictedImage = functions.imagePredictor(image);
-            functions.SaveFile(image, 1, false, "../imatges/prueba2.raw");
+            for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
+                for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
+                    int[] fila = image[i][j];
+                    functions.RHAAR_fwd(fila, fila, 5);
+                }
+            }
+            
+            functions.SaveFile(image, 1, false, "../imatges/prueba1.raw");
+            for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
+                for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
+                    int[] fila = image[i][j];
+                    functions.RHAAR_inv(fila, fila,5);
+                }
+            }
+            //predictedImage = functions.imagePredictor(image);
+            functions.SaveFile(image, 1, false, "../imatges/prueba3.raw");
 
 
         }catch (IOException e) {

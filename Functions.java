@@ -170,56 +170,49 @@ public class Functions {
     }
 
     public void RHAAR_fwd(int[] input_vector, int[] output_vector, int maxLevels) {
-        haarTransformRecursiveFWD(input_vector, output_vector, input_vector.length, maxLevels, 1);
-    }
+        int length = input_vector.length;
+        System.arraycopy(input_vector, 0, output_vector, 0, length); 
     
-    private void haarTransformRecursiveFWD(int[] input, int[] output, int length, int maxLevels, int currentLevel) {
-        if (length % 2 != 0) {
-            System.out.println("odd vector");
-            return;
-        }
-        if (currentLevel > maxLevels) {
-            return;
-        }
-        
-        int[] aux = new int[length];
-        for (int i = 0; i < length / 2; i++) {
-            aux[length / 2 + i] = (input[2 * i + 1] - input[2 * i]); //prediction
-            aux[i] = (input[2 * i] + (aux[length / 2 + i]) / 2); //update
-        }
-        for (int i = 0; i < aux.length; i++) {
-            output[i] = aux[i];
-        }
-        if (length > 2) {
-            haarTransformRecursiveFWD(output, output, length / 2,  maxLevels, currentLevel + 1);
+        for (int level = 0; level < maxLevels; level++) {
+            int step = length >> level; //es lo mismo que hacer length / 2^level
+            if (step < 2) {
+                break;
+            }       
+    
+            int halfStep = step / 2;
+            int[] aux = new int[step];
+    
+            for (int i = 0; i < halfStep; i++) {
+                aux[i] = (output_vector[2 * i] + output_vector[2 * i + 1]) / 2; 
+                aux[halfStep + i] = output_vector[2 * i + 1] - output_vector[2 * i];
+            }
+    
+            System.arraycopy(aux, 0, output_vector, 0, step);
         }
     }
     
-    public void RHAAR_inv(int[] input_vector, int[] output_vector, int maxLevels){
-        maxLevels = input_vector.length / (int) (Math.pow(2, maxLevels));
-        haarTransformRecursiveINV(input_vector, output_vector, input_vector.length, maxLevels); //xSize / 2 / 2 / 2
-    }
-    private void haarTransformRecursiveINV(int[] input, int[] output, int length, int minValue){
-        if (minValue <= 1){
-            output[0] = input[0];
-            return;
-        }
-        int[] aux = new int[length];
-
-        for (int i = 0; i < minValue; i++) {
-            int w = input[minValue + i];
-            aux[2 * i] = input[i] - (w / 2);
-            aux[2 * i + 1] = w + aux[2 * i];
-        
-        }
-        
-        System.arraycopy(aux, 0, output, 0, length);
-
-        if(minValue*2 < length){
-             haarTransformRecursiveINV(output, input, length, minValue * 2);
+    public void RHAAR_inv(int[] input_vector, int[] output_vector, int maxLevels) {
+        int length = input_vector.length;
+        System.arraycopy(input_vector, 0, output_vector, 0, length); 
+    
+        for (int level = maxLevels - 1; level >= 0; level--) {
+            int step = length >> level; 
+            if (step < 2) {
+                break;
+            }
+    
+            int halfStep = step / 2;
+            int[] aux = new int[step];
+    
+            for (int i = 0; i < halfStep; i++) {
+                aux[2 * i] = output_vector[i] - (output_vector[halfStep + i] / 2);  
+                aux[2 * i + 1] = output_vector[halfStep + i] + aux[2 * i];         
+            }
+    
+            System.arraycopy(aux, 0, output_vector, 0, step);
         }
     }
-
+    
     public int[][][] imagePredictor(int[][][] original_image){
         System.out.println("Predicting...");
         int[][][] predictedImage = new int[original_image.length][original_image[0].length][original_image[0][0].length];
