@@ -249,6 +249,43 @@ public class Functions {
         return predictedImage;
     }
 
+    public int [][][] imagePredictorInv(int[][][] image_Predicted)
+    {
+        System.out.println("Predicting Inverse...");
+        int[][][] predictedImageInv = new int[image_Predicted.length][image_Predicted[0].length][image_Predicted[0][0].length];
+        for (int i = 0; i < image_Predicted.length; i++) {
+            for (int j = 0; j < image_Predicted[i].length; j++) {
+                for (int k = 0; k < image_Predicted[i][j].length; k++) {
+                    predictedImageInv[i][j][k] = image_Predicted[i][j][k];
+                }
+            }
+        }
+        for (int i = 0; i < predictedImageInv.length; i++) {
+            for (int j = 0; j < predictedImageInv[i].length; j++) {
+                for (int k = 0; k < predictedImageInv[i][j].length; k++) {
+                    int leftPixel = 0;
+                    int topPixel = 0;
+                    int diagonalPixel = 0;
+                    if (k > 0) { 
+                        leftPixel = predictedImageInv[i][j][k - 1];
+                    }
+                    if (j > 0) { 
+                        topPixel = predictedImageInv[i][j - 1][k];
+                    }
+                    if (j > 0 && k > 0) { 
+                        diagonalPixel = predictedImageInv[i][j - 1][k - 1];
+                    }
+
+                    int predictedValue = Math.min(leftPixel, Math.min(topPixel, diagonalPixel));
+
+                    int diff = predictedImageInv[i][j][k] - predictedValue;
+                    predictedImageInv[i][j][k] += diff;
+                }
+            }
+        }
+        return predictedImageInv;
+    }
+
     public void ZipImage(String imagepath, String zipImagepath) throws IOException {
         FileOutputStream fos = new FileOutputStream(zipImagepath);
         ZipOutputStream zipOut = new ZipOutputStream(fos);
