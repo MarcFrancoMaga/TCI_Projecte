@@ -67,7 +67,6 @@ public class Main {
                     functions.RHAAR_fwd(fila, fila, 5);
                 }
             }
-            
             functions.SaveFile(image, 1, false, "../imatges/prueba1.raw");
             for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
                 for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
@@ -76,7 +75,7 @@ public class Main {
                 }
             }
             //predictedImage = functions.imagePredictor(image);
-            functions.SaveFile(image, 1, false, "../imatges/prueba3.raw");
+            functions.SaveFile(image, 1, false, "../imatges/prueba2.raw");
 
 
         }catch (IOException e) {

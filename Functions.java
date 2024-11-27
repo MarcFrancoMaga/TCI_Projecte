@@ -174,7 +174,7 @@ public class Functions {
         System.arraycopy(input_vector, 0, output_vector, 0, length); 
     
         for (int level = 0; level < maxLevels; level++) {
-            int step = length >> level; //es lo mismo que hacer length / 2^level
+            int step = length / (int) Math.pow(2, level);
             if (step < 2) {
                 break;
             }       
@@ -195,8 +195,8 @@ public class Functions {
         int length = input_vector.length;
         System.arraycopy(input_vector, 0, output_vector, 0, length); 
     
-        for (int level = maxLevels - 1; level >= 0; level--) {
-            int step = length >> level; 
+        for (int level = maxLevels; level > 0; level--) {
+            int step = length / (int) Math.pow(2, level - 1);
             if (step < 2) {
                 break;
             }
