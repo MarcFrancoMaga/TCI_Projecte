@@ -66,26 +66,26 @@ public class Main {
                 }
             }
             for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
-                for (int k = 0; k < image[i][0].length; k++) { // Iterar sobre columnas
-                    for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
+                for (int k = 0; k < image[i].length; k++) { // Iterar sobre columnas
+                    for (int j = 0; j < image[i][k].length; j++) { // Iterar sobre filas
                         int[] columna = image[i][j]; // Acceder a la fila 'j' en la componente 'i'
-                        functions.RHAAR_inv(columna, columna, maxLevels); // Llamada a la función
-                    }
-                }
-            }
-            for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
-                for (int k = 0; k < image[i][0].length; k++) { // Iterar sobre columnas
-                    for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
-                        int[] columna = image[i][j]; // Acceder a la fila 'j' en la componente 'i'
-                        functions.RHAAR_inv(columna, columna, maxLevels); // Llamada a la función
+                        functions.RHAAR_fwd(columna, columna, maxLevels); // Llamada a la función
                     }
                 }
             }
             functions.SaveFile(image, 1, false, "../imatges/WaveletFWD.raw");
             for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
+                for (int k = 0; k < image[i][0].length; k++) { // Iterar sobre columnas
+                    for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
+                        int[] columna = image[i][j]; // Acceder a la fila 'j' en la componente 'i'
+                        functions.RHAAR_inv(columna, columna, maxLevels); // Llamada a la función
+                    }
+                }
+            }
+            for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
                 for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
                     int[] fila = image[i][j];
-                    functions.RHAAR_inv(fila, fila,maxLevels);
+                    functions.RHAAR_inv(fila, fila, maxLevels);
                 }
             }
             functions.SaveFile(image, 1, false, "../imatges/WaveletINV.raw");
