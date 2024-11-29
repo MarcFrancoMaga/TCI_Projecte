@@ -25,6 +25,7 @@ public class Main {
         float PSNR = 0;
         float MSE = 0;
         int PAE;
+        int maxLevels = 4;
         String path_file = arguments[0];
         int rows = Integer.parseInt(arguments[1]);
         int columns = Integer.parseInt(arguments[2]);
@@ -61,14 +62,14 @@ public class Main {
             for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
                 for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
                     int[] fila = image[i][j];
-                    functions.RHAAR_fwd(fila, fila, 8);
+                    functions.RHAAR_fwd(fila, fila, maxLevels);
                 }
             }
             for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
                 for (int k = 0; k < image[i][0].length; k++) { // Iterar sobre columnas
                     for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
                         int[] columna = image[i][j]; // Acceder a la fila 'j' en la componente 'i'
-                        functions.RHAAR_inv(columna, columna, 8); // Llamada a la función
+                        functions.RHAAR_inv(columna, columna, maxLevels); // Llamada a la función
                     }
                 }
             }
@@ -76,7 +77,7 @@ public class Main {
                 for (int k = 0; k < image[i][0].length; k++) { // Iterar sobre columnas
                     for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
                         int[] columna = image[i][j]; // Acceder a la fila 'j' en la componente 'i'
-                        functions.RHAAR_inv(columna, columna, 8); // Llamada a la función
+                        functions.RHAAR_inv(columna, columna, maxLevels); // Llamada a la función
                     }
                 }
             }
@@ -84,7 +85,7 @@ public class Main {
             for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
                 for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
                     int[] fila = image[i][j];
-                    functions.RHAAR_inv(fila, fila,8);
+                    functions.RHAAR_inv(fila, fila,maxLevels);
                 }
             }
             functions.SaveFile(image, 1, false, "../imatges/WaveletINV.raw");
