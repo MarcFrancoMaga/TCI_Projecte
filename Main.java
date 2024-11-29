@@ -20,6 +20,7 @@ public class Main {
         int[][][] image;
         int[][][] quantified_image;
         int[][][] predictedImage;
+        int[][][] predictedImageINV;
         float entropy = 0;
         float PSNR = 0;
         float MSE = 0;
@@ -41,10 +42,6 @@ public class Main {
             // MSE = functions.MSE(image, quantified_image);
             // PSNR = functions.PSNR(image, quantified_image, MSE);
             // PAE = functions.PAE(image, quantified_image);
-
-            //functions.SaveFile(quantified_image, 1, false, "../imatges/prueba.raw")
-
-            // int maxLevels = Numero maximo de niveles de la wavelet
             // int[] input_vector = {1,2,3,4,5,6,7,8};
             // int[] output_vector = new int[input_vector.length];
             // int[] outputput_vector = new int[input_vector.length];
@@ -64,18 +61,38 @@ public class Main {
             for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
                 for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
                     int[] fila = image[i][j];
-                    functions.RHAAR_fwd(fila, fila, 5);
+                    functions.RHAAR_fwd(fila, fila, 8);
                 }
             }
-            functions.SaveFile(image, 1, false, "../imatges/prueba1.raw");
+            for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
+                for (int k = 0; k < image[i][0].length; k++) { // Iterar sobre columnas
+                    for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
+                        int[] columna = image[i][j]; // Acceder a la fila 'j' en la componente 'i'
+                        functions.RHAAR_inv(columna, columna, 8); // Llamada a la función
+                    }
+                }
+            }
+            for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
+                for (int k = 0; k < image[i][0].length; k++) { // Iterar sobre columnas
+                    for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
+                        int[] columna = image[i][j]; // Acceder a la fila 'j' en la componente 'i'
+                        functions.RHAAR_inv(columna, columna, 8); // Llamada a la función
+                    }
+                }
+            }
+            functions.SaveFile(image, 1, false, "../imatges/WaveletFWD.raw");
             for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
                 for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
                     int[] fila = image[i][j];
-                    functions.RHAAR_inv(fila, fila,5);
+                    functions.RHAAR_inv(fila, fila,8);
                 }
             }
-            //predictedImage = functions.imagePredictor(image);
-            functions.SaveFile(image, 1, false, "../imatges/prueba2.raw");
+            functions.SaveFile(image, 1, false, "../imatges/WaveletINV.raw");
+            // predictedImage = functions.imagePredictor(image);
+            // functions.SaveFile(predictedImage, 1, false, "../imatges/PredictedImage.raw");
+            // predictedImageINV = functions.imagePredictorInv(predictedImage);
+            // functions.SaveFile(predictedImageINV, 1, false, "../imatges/PredictedImageINV.raw");
+            //functions.ZipImage("../imatges/PredictedImage.raw", "../imatges/PredictedImage.zip");
 
 
         }catch (IOException e) {

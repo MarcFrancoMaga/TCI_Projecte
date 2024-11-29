@@ -179,12 +179,12 @@ public class Functions {
                 break;
             }       
     
-            int halfStep = step / 2;
+            int halfStep = step / 2; //mitad del vector
             int[] aux = new int[step];
     
             for (int i = 0; i < halfStep; i++) {
-                aux[i] = (output_vector[2 * i] + output_vector[2 * i + 1]) / 2; 
-                aux[halfStep + i] = output_vector[2 * i + 1] - output_vector[2 * i];
+                aux[i] = (output_vector[2 * i] + output_vector[2 * i + 1]) / 2; //mitad izquierda
+                aux[halfStep + i] = output_vector[2 * i + 1] - output_vector[2 * i]; //mitad derecha
             }
     
             System.arraycopy(aux, 0, output_vector, 0, step);
@@ -242,7 +242,7 @@ public class Functions {
                     int predictedValue = Math.min(leftPixel, Math.min(topPixel, diagonalPixel));
 
                     int diff = predictedImage[i][j][k] - predictedValue;
-                    predictedImage[i][j][k] += diff;
+                    predictedImage[i][j][k] = diff;
                 }
             }
         }
@@ -260,36 +260,37 @@ public class Functions {
                 }
             }
         }
-        for (int i = 0; i < predictedImageInv.length; i++) {
-            for (int j = 0; j < predictedImageInv[i].length; j++) {
-                for (int k = 0; k < predictedImageInv[i][j].length; k++) {
+        for (int i = 0; i < image_Predicted.length; i++) {
+            for (int j = 0; j < image_Predicted[i].length; j++) {
+                for (int k = 0; k < image_Predicted[i][j].length; k++) {
                     int leftPixel = 0;
                     int topPixel = 0;
                     int diagonalPixel = 0;
                     if (k > 0) { 
-                        leftPixel = predictedImageInv[i][j][k - 1];
+                        leftPixel = image_Predicted[i][j][k - 1];
                     }
                     if (j > 0) { 
-                        topPixel = predictedImageInv[i][j - 1][k];
+                        topPixel = image_Predicted[i][j - 1][k];
                     }
                     if (j > 0 && k > 0) { 
-                        diagonalPixel = predictedImageInv[i][j - 1][k - 1];
+                        diagonalPixel = image_Predicted[i][j - 1][k - 1];
                     }
 
                     int predictedValue = Math.min(leftPixel, Math.min(topPixel, diagonalPixel));
 
-                    int diff = predictedImageInv[i][j][k] - predictedValue;
-                    predictedImageInv[i][j][k] += diff;
+                    int diff = image_Predicted[i][j][k] +  predictedValue;
+                    predictedImageInv[i][j][k] = diff;
                 }
             }
         }
         return predictedImageInv;
     }
 
-    public void ZipImage(String imagepath, String zipImagepath) throws IOException {
-        FileOutputStream fos = new FileOutputStream(zipImagepath);
+    public void ZipImage(String imagePath, String zipImagePath) throws IOException {
+        System.out.println("Zipping...");
+        FileOutputStream fos = new FileOutputStream(zipImagePath);
         ZipOutputStream zipOut = new ZipOutputStream(fos);
-        File imageToZip = new File(imagepath);
+        File imageToZip = new File(imagePath);
         FileInputStream fis = new FileInputStream(imageToZip);
         ZipEntry zipEntry = new ZipEntry(imageToZip.getName());
         zipOut.putNextEntry(zipEntry);
@@ -303,4 +304,11 @@ public class Functions {
         fis.close();
         fos.close();
     }
+
+    // public void UnzipImage(String zipImagePath, String DestPath) throws IOException {
+    //     File destDir = new File(DestPath);
+    //     byte[] buffer = new byte[1024];
+    //     ZipInputStream zis = new ZipInputStream(new FileInputStream(zipImagePath));
+    //     ZipEntry zipEntry = 
+    // }
 }   
