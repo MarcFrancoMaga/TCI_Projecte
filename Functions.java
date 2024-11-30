@@ -305,10 +305,19 @@ public class Functions {
         fos.close();
     }
 
-    // public void UnzipImage(String zipImagePath, String DestPath) throws IOException {
-    //     File destDir = new File(DestPath);
-    //     byte[] buffer = new byte[1024];
-    //     ZipInputStream zis = new ZipInputStream(new FileInputStream(zipImagePath));
-    //     ZipEntry zipEntry = 
-    //// }
+    public void UnzipImage(String zipImagePath, String DestPath) throws IOException {
+         File destDir = new File(DestPath);
+         byte[] buffer = new byte[1024];
+         ZipInputStream zis = new ZipInputStream(new FileInputStream(zipImagePath));
+         ZipEntry zipEntry = zis.getNextEntry();
+         FileOutputStream fos = new FileOutputStream(DestPath);
+         int len;
+         while ((len = zis.read(buffer)) > 0) {
+             fos.write(buffer, 0, len);
+         }
+         fos.close();
+         zis.closeEntry();
+         zis.close();
+
+    }
 }   
