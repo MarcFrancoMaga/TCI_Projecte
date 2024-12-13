@@ -306,6 +306,42 @@ public class Functions {
     }
 
     public void UnzipImage(String zipImagePath, String DestPath) throws IOException {
+<<<<<<< HEAD
+        System.out.println("Unzipping...");
+        File destDir = new File(DestPath);
+        byte[] buffer = new byte[1024];
+        ZipInputStream zis = new ZipInputStream(new FileInputStream(zipImagePath));
+        ZipEntry zipEntry = zis.getNextEntry();
+        while (zipEntry != null) {
+            File destFile = new File(destDir, zipEntry.getName());
+            String destDirPath = destDir.getCanonicalPath();
+            String destFilePath = destFile.getCanonicalPath();
+            if (!destFilePath.startsWith(destDirPath + File.separator)) {
+                throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
+            }
+            
+            if (zipEntry.isDirectory()) {
+                if (!destFile.isDirectory() && !destFile.mkdirs()) {
+                    throw new IOException("Failed to create directory " + destFile);
+                }
+            } else {
+                File parent = destFile.getParentFile();
+                if (!parent.isDirectory() && !parent.mkdirs()) {
+                    throw new IOException("Failed to create directory " + parent);
+                }
+    
+                FileOutputStream fos = new FileOutputStream(destFile);
+                int len;
+                while ((len = zis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, len);
+                }
+                fos.close();
+            }
+            zipEntry = zis.getNextEntry();
+        }
+        zis.closeEntry();
+        zis.close();
+=======
         File dir = new File(DestPath);
         // create output directory if it doesn't exist
         if(!dir.exists()) dir.mkdirs();
@@ -340,5 +376,6 @@ public class Functions {
             e.printStackTrace();
         }
         
+>>>>>>> dbb781cedea887cfef8b73909a4827d749a96a23
     }
 }   
