@@ -306,7 +306,6 @@ public class Functions {
     }
 
     public void UnzipImage(String zipImagePath, String DestPath) throws IOException {
-<<<<<<< HEAD
         System.out.println("Unzipping...");
         File destDir = new File(DestPath);
         byte[] buffer = new byte[1024];
@@ -341,41 +340,5 @@ public class Functions {
         }
         zis.closeEntry();
         zis.close();
-=======
-        File dir = new File(DestPath);
-        // create output directory if it doesn't exist
-        if(!dir.exists()) dir.mkdirs();
-        FileInputStream fis;
-        //buffer for read and write data to file
-        byte[] buffer = new byte[1024];
-        try {
-            fis = new FileInputStream(zipImagePath);
-            ZipInputStream zis = new ZipInputStream(fis);
-            ZipEntry ze = zis.getNextEntry();
-            while(ze != null){
-                String fileName = ze.getName();
-                File newFile = new File(DestPath + File.separator + fileName);
-                System.out.println("Unzipping to "+newFile.getAbsolutePath());
-                //create directories for sub directories in zip
-                new File(newFile.getParent()).mkdirs();
-                FileOutputStream fos = new FileOutputStream(newFile);
-                int len;
-                while ((len = zis.read(buffer)) > 0) {
-                fos.write(buffer, 0, len);
-                }
-                fos.close();
-                //close this ZipEntry
-                zis.closeEntry();
-                ze = zis.getNextEntry();
-            }
-            //close last ZipEntry
-            zis.closeEntry();
-            zis.close();
-            fis.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
->>>>>>> dbb781cedea887cfef8b73909a4827d749a96a23
     }
 }   
