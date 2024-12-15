@@ -25,7 +25,7 @@ public class Main {
         float PSNR = 0;
         float MSE = 0;
         int PAE;
-        int maxLevels = 2;
+        int maxLevels = 3;
         String path_file = arguments[0];
         int rows = Integer.parseInt(arguments[1]);
         int columns = Integer.parseInt(arguments[2]);
@@ -43,23 +43,30 @@ public class Main {
             // MSE = functions.MSE(image, quantified_image);
             // PSNR = functions.PSNR(image, quantified_image, MSE);
             // PAE = functions.PAE(image, quantified_image);
-            System.out.println("FWD FILAS");
+            System.out.println("WAVELET FWD");
             int level = 0;
-            int currentRows = image[0].length;   
-            int currentCols = image[0][0].length;
+            int currentRows = image[0].length;    
+            int currentCols = image[0][0].length; 
 
-            while(level < maxLevels) {
+            while (level < maxLevels) {
+            
                 for (int i = 0; i < image.length; i++) { 
                     for (int j = 0; j < currentRows; j++) { 
-                        int[] fila = image[i][j];
+                        int[] fila = new int[currentCols];
+                        for (int k = 0; k < currentCols; k++) {
+                            fila[k] = image[i][j][k];
+                        }
                         functions.RHAAR_fwd(fila, fila, 1);
-                    }
+                        for (int k = 0; k < currentCols; k++) {
+                            image[i][j][k] = fila[k];
+                        }                    }
                 }
+            
                 for (int i = 0; i < image.length; i++) { 
                     for (int j = 0; j < currentCols; j++) { 
                         int[] columna = new int[currentRows]; 
                         for (int k = 0; k < currentRows; k++) { 
-                            columna[k] = image[i][k][j]; // REVISAR ESTO
+                            columna[k] = image[i][k][j];
                         }
                         functions.RHAAR_fwd(columna, columna, 1);
                         for (int k = 0; k < currentRows; k++) {
@@ -67,31 +74,50 @@ public class Main {
                         }
                     }
                 }
-
+            
                 currentRows /= 2;
                 currentCols /= 2;
                 level++;
             }
             
             functions.SaveFile(image, 1, false, "../imatges/WaveletFWD.raw");
-
-            System.out.println("INV FILAS");
-            for (int i = 0; i < image.length; i++) { // Iterar sobre componentes
-                for (int j = 0; j < image[i].length; j++) { // Iterar sobre filas
-                    int[] fila = image[i][j];
-                    functions.RHAAR_inv(fila, fila, maxLevels);
-                }
-            }
-            System.out.println("INV COLUMNAS");
-            for (int i = 0; i < image.length; i++) { // Iterar sobre componentes/caras
-                for (int j = 0; j < image[i][0].length; j++) { // Iterar sobre columnas
-                    int[] columna = new int[image[i].length]; // Crear un array para almacenar la columna
-                    for (int k = 0; k < image[i].length; k++) { // Iterar sobre filas para construir la columna
-                        columna[k] = image[i][k][j];
+            System.out.println("WAVELET INV");
+            level = maxLevels;
+            currentRows = image[0].length;    
+            currentCols = image[0][0].length; 
+            while (level > 0) {
+                for (int i = 0; i < image.length; i++) { 
+                    for (int j = 0; j < currentCols; j++) { 
+                        int[] columna = new int[currentRows]; 
+                        for (int k = 0; k < currentRows; k++) { 
+                            columna[k] = image[i][k][j];
+                        }
+                        functions.RHAAR_inv(columna, columna, 1);
+                        for (int k = 0; k < currentRows; k++) {
+                            image[i][k][j] = columna[k];
+                        }
                     }
-                    functions.RHAAR_inv(columna, columna, maxLevels);
                 }
+                for (int i = 0; i < image.length; i++) { 
+                    for (int j = 0; j < currentRows; j++) { 
+                        int[] fila = new int[currentCols];
+                        for (int k = 0; k < currentCols; k++) {
+                            fila[k] = image[i][j][k];
+                        }
+                        functions.RHAAR_inv(fila, fila, 1);
+                        for (int k = 0; k < currentCols; k++) {
+                            image[i][j][k] = fila[k];
+                        }                    
+                    }
+                }
+            
+                
+            
+                currentRows *= 2;
+                currentCols *= 2;
+                level--;
             }
+            
             functions.SaveFile(image, 1, false, "../imatges/WaveletINV.raw");
             // predictedImage = functions.imagePredictor(image);
             // functions.SaveFile(predictedImage, 1, false, "../imatges/PredictedImage.raw");
