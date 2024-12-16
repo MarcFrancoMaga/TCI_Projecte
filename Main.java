@@ -6,8 +6,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Enter image data: ");
+        System.out.print("Introduce los datos de la imagen: ");
 
         String input = scanner.nextLine();
         String[] arguments = input.split(" ");
@@ -17,6 +16,7 @@ public class Main {
             scanner.close();
             return;
         }
+        
         int[][][] image;
         int[][][] quantified_image;
         int[][][] predictedImage;
@@ -37,8 +37,28 @@ public class Main {
         Functions functions = new Functions();
         try {
             image = functions.LoadImage(path_file, rows, columns, components, bytes_sample, signed);
-            // quantified_image = functions.Quantization(image, 5, 0);
-            // quantified_image = functions.Quantization(quantified_image, 5, 1);
+            // System.out.print("Quiere cuantizar?: 1.Si 2.No ");
+            // int choice = scanner.nextInt();
+            // if(choice == 1){
+            //     System.out.print("Cuantos steps quiere hacer?");
+            //     int step = scanner.nextInt();
+            //     quantified_image = functions.Quantization(image, step, 0);
+            //     //quantified_image = functions.Quantization(quantified_image, step, 1);
+            // }
+            // System.out.print("Quiere WAVELET o PREDECIR?: 1.WAVELET 2.PREDECIR ");
+            // choice = scanner.nextInt();
+            // switch (choice) {
+            //     case 1:
+            //         System.out.print("Cuantos niveles de wavelet quiere hacer?");
+            //         int wavelet_step = scanner.nextInt();
+            //         break;
+            //     case 2:
+            //         break;
+            //     default:
+            //         System.out.print("Valor incorrecto");
+            //         scanner.close();
+            //         break;
+            // }
             // entropy = functions.Entropy(quantified_image);
             // MSE = functions.MSE(image, quantified_image);
             // PSNR = functions.PSNR(image, quantified_image, MSE);
