@@ -25,7 +25,7 @@ public class Main {
         float PSNR = 0;
         float MSE = 0;
         int PAE;
-        int maxLevels = 3;
+        int maxLevels = 4;
         String path_file = arguments[0];
         int rows = Integer.parseInt(arguments[1]);
         int columns = Integer.parseInt(arguments[2]);
@@ -67,9 +67,10 @@ public class Main {
             int level = 0;
             int currentRows = image[0].length;    
             int currentCols = image[0][0].length; 
-
+            System.out.println("nivel antes del primer while: " + level);
+            System.out.println("CurrentRows antes del primer while: " + currentRows);
+            System.out.println("CurrentCols antes del primer while: " + currentCols);
             while (level < maxLevels) {
-            
                 for (int i = 0; i < image.length; i++) { 
                     for (int j = 0; j < currentRows; j++) { 
                         int[] fila = new int[currentCols];
@@ -94,17 +95,20 @@ public class Main {
                         }
                     }
                 }
-            
                 currentRows /= 2;
                 currentCols /= 2;
                 level++;
+                System.out.println("nivel dentro del primer while: " + level);
+                System.out.println("CurrentRows dentro del primer while: " + currentRows);
+                System.out.println("CurrentCols dentro del primer while: " + currentCols);
             }
-            
+            System.out.println("nivel pre inv: " + level);
+            System.out.println("CurrentRows pre inv: " + currentRows);
+            System.out.println("CurrentCols pre inv: " + currentCols);
             functions.SaveFile(image, 1, false, "../imatges/WaveletFWD.raw");
             System.out.println("WAVELET INV");
-            level = maxLevels;
-            currentRows = image[0].length / 2;    
-            currentCols = image[0][0].length / 2; 
+            currentRows = image[0].length / 2;
+            currentCols = image[0][0].length / 2;
             while (level > 0) {
                 for (int i = 0; i < image.length; i++) { 
                     for (int j = 0; j < currentCols; j++) { 
@@ -133,6 +137,9 @@ public class Main {
                 currentRows = Math.min(currentRows * 2, image[0].length);
                 currentCols = Math.min(currentCols * 2, image[0][0].length);;
                 level--;
+                System.out.println("nivel dentro del segundo while: " + level);
+                System.out.println("CurrentRows dentro del segundo while: " + currentRows);
+                System.out.println("CurrentCols dentro del segundo while: " + currentCols);
             }
             
             functions.SaveFile(image, 1, false, "../imatges/WaveletINV.raw");
