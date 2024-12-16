@@ -83,8 +83,8 @@ public class Main {
             functions.SaveFile(image, 1, false, "../imatges/WaveletFWD.raw");
             System.out.println("WAVELET INV");
             level = maxLevels;
-            currentRows = image[0].length;    
-            currentCols = image[0][0].length; 
+            currentRows = image[0].length / 2;    
+            currentCols = image[0][0].length / 2; 
             while (level > 0) {
                 for (int i = 0; i < image.length; i++) { 
                     for (int j = 0; j < currentCols; j++) { 
@@ -110,11 +110,8 @@ public class Main {
                         }                    
                     }
                 }
-            
-                
-            
-                currentRows *= 2;
-                currentCols *= 2;
+                currentRows = Math.min(currentRows * 2, image[0].length);
+                currentCols = Math.min(currentCols * 2, image[0][0].length);;
                 level--;
             }
             
