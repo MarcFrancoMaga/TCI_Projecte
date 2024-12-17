@@ -25,7 +25,7 @@ public class Main {
         float PSNR = 0;
         float MSE = 0;
         int PAE;
-        int maxLevels = 4;
+        int maxLevels = 5;
         String path_file = arguments[0];
         int rows = Integer.parseInt(arguments[1]);
         int columns = Integer.parseInt(arguments[2]);
@@ -64,248 +64,74 @@ public class Main {
             // PSNR = functions.PSNR(image, quantified_image, MSE);
             // PAE = functions.PAE(image, quantified_image);
             System.out.println("WAVELET FWD");
-            int level = 0;
             int currentRows = image[0].length;
             int currentCols = image[0][0].length;
-            System.out.println("entropy pre" + functions.Entropy(image));
-            // Nivel 1: Primer nivel de filas y columnas
-            for (int i = 0; i < image.length; i++) {
-                // Transformada en filas
-                for (int j = 0; j < currentRows; j++) {
-                    int[] fila = new int[currentCols];
-                    for (int k = 0; k < currentCols; k++) {
-                        fila[k] = image[i][j][k];
+            int count = 2;
+            System.out.println("entropy pre " + functions.Entropy(image));
+            for (int level = 1; level <= maxLevels; level++) {
+                for (int i = 0; i < image.length; i++) {
+                    // Transformada en filas
+                    for (int j = 0; j < currentRows; j++) {
+                        int[] fila = new int[currentCols];
+                        for (int k = 0; k < currentCols; k++) {
+                            fila[k] = image[i][j][k];
+                        }
+                        functions.RHAAR_fwd(fila, fila, 1);
+                        for (int k = 0; k < currentCols; k++) {
+                            image[i][j][k] = fila[k];
+                        }
                     }
-                    functions.RHAAR_fwd(fila, fila, 1);
-                    for (int k = 0; k < currentCols; k++) {
-                        image[i][j][k] = fila[k];
+                    // Transformada en columnas
+                    for (int j = 0; j < currentCols; j++) {
+                        int[] columna = new int[currentRows];
+                        for (int k = 0; k < currentRows; k++) {
+                            columna[k] = image[i][k][j];
+                        }
+                        functions.RHAAR_fwd(columna, columna, 1);
+                        for (int k = 0; k < currentRows; k++) {
+                            image[i][k][j] = columna[k];
+                        }
                     }
                 }
-
-                // Transformada en columnas
-                for (int j = 0; j < currentCols; j++) {
-                    int[] columna = new int[currentRows];
-                    for (int k = 0; k < currentRows; k++) {
-                        columna[k] = image[i][k][j];
-                    }
-                    functions.RHAAR_fwd(columna, columna, 1);
-                    for (int k = 0; k < currentRows; k++) {
-                        image[i][k][j] = columna[k];
-                    }
+                if(count <= maxLevels){
+                    currentRows /= 2;
+                    currentCols /= 2;
                 }
+                count++;
             }
-
-            // Reducir dimensiones para el nivel 2
-            currentRows /= 2;
-            currentCols /= 2;
-
-            // Nivel 2: Segundo nivel de filas y columnas
-            for (int i = 0; i < image.length; i++) {
-                // Transformada en filas
-                for (int j = 0; j < currentRows; j++) {
-                    int[] fila = new int[currentCols];
-                    for (int k = 0; k < currentCols; k++) {
-                        fila[k] = image[i][j][k];
-                    }
-                    functions.RHAAR_fwd(fila, fila, 1);
-                    for (int k = 0; k < currentCols; k++) {
-                        image[i][j][k] = fila[k];
-                    }
-                }
-
-                // Transformada en columnas
-                for (int j = 0; j < currentCols; j++) {
-                    int[] columna = new int[currentRows];
-                    for (int k = 0; k < currentRows; k++) {
-                        columna[k] = image[i][k][j];
-                    }
-                    functions.RHAAR_fwd(columna, columna, 1);
-                    for (int k = 0; k < currentRows; k++) {
-                        image[i][k][j] = columna[k];
-                    }
-                }
-            }
-
-            // Reducir dimensiones para el nivel 3
-            currentRows /= 2;
-            currentCols /= 2;
-
-            // Nivel 3: Tercer nivel de filas y columnas
-            for (int i = 0; i < image.length; i++) {
-                // Transformada en filas
-                for (int j = 0; j < currentRows; j++) {
-                    int[] fila = new int[currentCols];
-                    for (int k = 0; k < currentCols; k++) {
-                        fila[k] = image[i][j][k];
-                    }
-                    functions.RHAAR_fwd(fila, fila, 1);
-                    for (int k = 0; k < currentCols; k++) {
-                        image[i][j][k] = fila[k];
-                    }
-                }
-
-                // Transformada en columnas
-                for (int j = 0; j < currentCols; j++) {
-                    int[] columna = new int[currentRows];
-                    for (int k = 0; k < currentRows; k++) {
-                        columna[k] = image[i][k][j];
-                    }
-                    functions.RHAAR_fwd(columna, columna, 1);
-                    for (int k = 0; k < currentRows; k++) {
-                        image[i][k][j] = columna[k];
-                    }
-                }
-            }
-            currentRows /= 2;
-            currentCols /= 2;
-
-            // Nivel 4: Tercer nivel de filas y columnas
-            for (int i = 0; i < image.length; i++) {
-                // Transformada en filas
-                for (int j = 0; j < currentRows; j++) {
-                    int[] fila = new int[currentCols];
-                    for (int k = 0; k < currentCols; k++) {
-                        fila[k] = image[i][j][k];
-                    }
-                    functions.RHAAR_fwd(fila, fila, 1);
-                    for (int k = 0; k < currentCols; k++) {
-                        image[i][j][k] = fila[k];
-                    }
-                }
-
-                // Transformada en columnas
-                for (int j = 0; j < currentCols; j++) {
-                    int[] columna = new int[currentRows];
-                    for (int k = 0; k < currentRows; k++) {
-                        columna[k] = image[i][k][j];
-                    }
-                    functions.RHAAR_fwd(columna, columna, 1);
-                    for (int k = 0; k < currentRows; k++) {
-                        image[i][k][j] = columna[k];
-                    }
-                }
-            }
-
             functions.SaveFile(image, 1, false, "../imatges/WaveletFWD.raw");
+            count = 2;
             System.out.println("WAVELET INV");
-
-            // Nivel 4: Reconstrucción en columnas y filas
-            for (int i = 0; i < image.length; i++) {
-                // Reconstrucción en columnas
-                for (int j = 0; j < currentCols; j++) {
-                    int[] columna = new int[currentRows];
-                    for (int k = 0; k < currentRows; k++) {
-                        columna[k] = image[i][k][j];
+            for (int level = maxLevels; level >= 1; level--) {                           
+                for (int i = 0; i < image.length; i++) {
+                    for (int j = 0; j < currentCols; j++) {
+                        int[] columna = new int[currentRows];
+                        for (int k = 0; k < currentRows; k++) {
+                            columna[k] = image[i][k][j];
+                        }
+                        functions.RHAAR_inv(columna, columna, 1);
+                        for (int k = 0; k < currentRows; k++) {
+                            image[i][k][j] = columna[k];
+                        }
                     }
-                    functions.RHAAR_inv(columna, columna, 1);
-                    for (int k = 0; k < currentRows; k++) {
-                        image[i][k][j] = columna[k];
+                    for (int j = 0; j < currentRows; j++) {
+                        int[] fila = new int[currentCols];
+                        for (int k = 0; k < currentCols; k++) {
+                            fila[k] = image[i][j][k];
+                        }
+                        functions.RHAAR_inv(fila, fila, 1);
+                        for (int k = 0; k < currentCols; k++) {
+                            image[i][j][k] = fila[k];
+                        }
                     }
+                    if(count <= maxLevels){
+                        currentRows *= 2;
+                        currentCols *= 2;
+                    }
+                    count++;
                 }
-
-                // Reconstrucción en filas
-                for (int j = 0; j < currentRows; j++) {
-                    int[] fila = new int[currentCols];
-                    for (int k = 0; k < currentCols; k++) {
-                        fila[k] = image[i][j][k];
-                    }
-                    functions.RHAAR_inv(fila, fila, 1);
-                    for (int k = 0; k < currentCols; k++) {
-                        image[i][j][k] = fila[k];
-                    }
-                }
-            }
-
-            // Duplicar dimensiones para el nivel 2
-            currentRows *= 2;
-            currentCols *= 2;
-
-            // Nivel 3: Reconstrucción en columnas y filas
-            for (int i = 0; i < image.length; i++) {
-                // Reconstrucción en columnas
-                for (int j = 0; j < currentCols; j++) {
-                    int[] columna = new int[currentRows];
-                    for (int k = 0; k < currentRows; k++) {
-                        columna[k] = image[i][k][j];
-                    }
-                    functions.RHAAR_inv(columna, columna, 1);
-                    for (int k = 0; k < currentRows; k++) {
-                        image[i][k][j] = columna[k];
-                    }
-                }
-
-                // Reconstrucción en filas
-                for (int j = 0; j < currentRows; j++) {
-                    int[] fila = new int[currentCols];
-                    for (int k = 0; k < currentCols; k++) {
-                        fila[k] = image[i][j][k];
-                    }
-                    functions.RHAAR_inv(fila, fila, 1);
-                    for (int k = 0; k < currentCols; k++) {
-                        image[i][j][k] = fila[k];
-                    }
-                }
-            }
-
-            // Duplicar dimensiones para el nivel 1
-            currentRows *= 2;
-            currentCols *= 2;
-
-            // Nivel 2: Reconstrucción en columnas y filas
-            for (int i = 0; i < image.length; i++) {
-                // Reconstrucción en columnas
-                for (int j = 0; j < currentCols; j++) {
-                    int[] columna = new int[currentRows];
-                    for (int k = 0; k < currentRows; k++) {
-                        columna[k] = image[i][k][j];
-                    }
-                    functions.RHAAR_inv(columna, columna, 1);
-                    for (int k = 0; k < currentRows; k++) {
-                        image[i][k][j] = columna[k];
-                    }
-                }
-
-                // Reconstrucción en filas
-                for (int j = 0; j < currentRows; j++) {
-                    int[] fila = new int[currentCols];
-                    for (int k = 0; k < currentCols; k++) {
-                        fila[k] = image[i][j][k];
-                    }
-                    functions.RHAAR_inv(fila, fila, 1);
-                    for (int k = 0; k < currentCols; k++) {
-                        image[i][j][k] = fila[k];
-                    }
-                }
-            }
-            currentRows *= 2;
-            currentCols *= 2;
-
-            // Nivel 1: Reconstrucción en columnas y filas
-            for (int i = 0; i < image.length; i++) {
-                // Reconstrucción en columnas
-                for (int j = 0; j < currentCols; j++) {
-                    int[] columna = new int[currentRows];
-                    for (int k = 0; k < currentRows; k++) {
-                        columna[k] = image[i][k][j];
-                    }
-                    functions.RHAAR_inv(columna, columna, 1);
-                    for (int k = 0; k < currentRows; k++) {
-                        image[i][k][j] = columna[k];
-                    }
-                }
-
-                // Reconstrucción en filas
-                for (int j = 0; j < currentRows; j++) {
-                    int[] fila = new int[currentCols];
-                    for (int k = 0; k < currentCols; k++) {
-                        fila[k] = image[i][j][k];
-                    }
-                    functions.RHAAR_inv(fila, fila, 1);
-                    for (int k = 0; k < currentCols; k++) {
-                        image[i][j][k] = fila[k];
-                    }
-                }
-            }
+            }            
+        
             System.out.println("entropy post " + functions.Entropy(image));
             functions.SaveFile(image, 1, false, "../imatges/WaveletINV.raw");
             // predictedImage = functions.imagePredictor(image);
