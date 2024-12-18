@@ -18,6 +18,7 @@ public class Main {
         }
 
         int[][][] image;
+        int[][][] saved_image;
         int[][][] quantified_image;
         int[][][] predictedImage;
         int[][][] predictedImageINV;
@@ -36,29 +37,101 @@ public class Main {
         //Enter image data: ../imatges/n1_GRAY.1_2560_2048_1_0_8_0_0_0 -> 2560 2048 1 1 0
         Functions functions = new Functions();
         try {
+            System.out.print("Quieres codificar o descodificar una imagen?");
+            System.out.print("Seleccione la imagen que quiere comprimir");
+            String image_path = scanner.nextLine();
             image = functions.LoadImage(path_file, rows, columns, components, bytes_sample, signed);
-            // System.out.print("Quiere cuantizar?: 1.Si 2.No ");
-            // int choice = scanner.nextInt();
-            // if(choice == 1){
-            //     System.out.print("Cuantos steps quiere hacer?");
-            //     int step = scanner.nextInt();
-            //     quantified_image = functions.Quantization(image, step, 0);
-            //     //quantified_image = functions.Quantization(quantified_image, step, 1);
-            // }
-            // System.out.print("Quiere WAVELET o PREDECIR?: 1.WAVELET 2.PREDECIR ");
-            // choice = scanner.nextInt();
-            // switch (choice) {
-            //     case 1:
-            //         System.out.print("Cuantos niveles de wavelet quiere hacer?");
-            //         int wavelet_step = scanner.nextInt();
-            //         break;
-            //     case 2:
-            //         break;
-            //     default:
-            //         System.out.print("Valor incorrecto");
-            //         scanner.close();
-            //         break;
-            // }
+
+            System.out.print("1.Codificar");
+            System.out.print("2.Descodificar");
+            int opcion_codificar = scanner.nextInt();
+            switch(opcion_codificar)
+            {
+                case 1:
+                System.out.print("Compresor");
+                System.out.print("Quiere cuantizar?: 1.Si 2.No ");
+                int choice = scanner.nextInt();
+                    if(choice == 1){
+                    System.out.print("Cuantos steps quiere hacer?");
+                    int step = scanner.nextInt();
+                    quantified_image = functions.Quantization(image, step, 0);
+                    //quantified_image = functions.Quantization(quantified_image, step, 1);
+                }
+                System.out.print("Quiere WAVELET o PREDECIR?: 1.WAVELET 2.PREDECIR ");
+                choice = scanner.nextInt();
+                switch (choice) {
+                    case 1:
+                        System.out.print("Cuantos niveles de wavelet quiere hacer?");
+                        int wavelet_step = scanner.nextInt();
+                        functions.RHAAR_fwd();
+                        break;
+                    case 2:
+                        functions.imagePredictor(image);
+                        break;
+
+                    default:
+                        System.out.print("Valor incorrecto");
+                        scanner.close();
+                        break;
+                }
+                System.out.print("Quieres comprimir o descomprimir? 1.Comprimir (ZIP) 2.Descomprimir (Unzip) ");
+                int option_compresion = scanner.nextInt();
+                    if(option_compresion == 1){
+                        System.out.print("Indica el path de la imagen que desea comprimir");
+                        String zip_path = scanner.nextLine();
+                        System.out.print("Indica el path dónde quiere guardar la imagen comprimida");
+                        String zip_saved_path = scanner.nextLine();
+                        functions.ZipImage(zip_path, zip_saved_path);
+                    }
+                    if(option_compresion == 2)
+                    {
+                        System.out.print("Indica el path de la imagen que desea descomprimir");
+                        String unzip_path = scanner.nextLine();
+                        System.out.print("Indica el path dónde quiere guardar la imagen descomprimida");
+                        String unzip_saved_path = scanner.nextLine();
+
+                        functions.UnzipImage(unzip_path,unzip_saved_path);
+                    }
+
+                    break;
+                case 2:
+                    System.out.print("Decodificador");
+
+                    System.out.print("Quiere WAVELET o PREDECIR?: 1.WAVELET 2.PREDECIR ");
+                    choice = scanner.nextInt();
+                    switch (choice) {
+                        case 1:
+                            System.out.print("Cuantos niveles de wavelet quiere deshacer?");
+                            int wavelet_step = scanner.nextInt();
+                            functions.RHAAR_inv();
+                            break;
+                        case 2:
+                            functions.imagePredictorInv(image);
+                            break;
+
+                        default:
+                            System.out.print("Valor incorrecto");
+                            scanner.close();
+                            break;
+                    }
+                    System.out.print("Queires descuatizar?");
+                    System.out.print("1.Si");
+                    System.out.print("2.No");
+                    int option_descuantizacion = scanner.nextInt();
+                    if(option_descuantizacion == 1){
+                        System.out.print("Cuantos steps quiere hacer?");
+                        int step = scanner.nextInt();
+                        quantified_image = functions.Quantization(image, step, 1);
+                        
+                        functions.SaveFile(image,bytes_sample, signed,"../imatges/");
+                        }
+                    break;
+
+                default:
+                    break;
+            }   
+
+        }
             // entropy = functions.Entropy(quantified_image);
             // MSE = functions.MSE(image, quantified_image);
             // PSNR = functions.PSNR(image, quantified_image, MSE);
