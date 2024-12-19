@@ -96,7 +96,9 @@ public class Main {
                                 }
                                 count++;
                             }
-                        
+                            System.out.println("current rows post fwd " + currentRows);
+                            System.out.println("current cols post fwd " + currentCols);
+                            System.out.println("entropy post fwd" + functions.Entropy(image));
                             break;
                         case 2:
                             predictedImage = functions.imagePredictor(image);
@@ -158,26 +160,22 @@ public class Main {
                     image = functions.LoadImage(path_file, rows, columns, components, bytes_sample, signed);
                     quantified_image = new int[image.length][image[0].length][image[0][0].length];
                     predictedImage = new int[image.length][image[0].length][image[0][0].length];
-
                     System.out.print("¿Qué método deseas usar?\n1. Wavelet\n2. Predictor: ");
                     methodChoice = scanner.nextInt();
                     scanner.nextLine();
                     switch (methodChoice) {
                         case 1:
-                            System.out.print("Cuantos niveles de wavelet quiere deshacer?");
+                            System.out.print("Cuantos niveles de wavelet quiere deshacer? ");
                             int maxLevels = scanner.nextInt();
                             scanner.nextLine();                            
                             int count = 2;
-                            int currentRows = image[0].length;
-                            int currentCols = image[0][0].length;
-                            System.out.println("current rows pre inv " + currentRows);
-                            System.out.println("current cols pre inv " + currentCols);
-                            for (int i = 1; i < maxLevels; i++){
+                            int currentRows = rows;
+                            int currentCols = columns;
+                            for (int i = 0; i < maxLevels - 1; i++){
                                 currentRows /= 2;
-                                currentCols /=2;
+                                currentCols /= 2;
                             } 
-                            System.out.println("current rows inv " + currentRows);
-                            System.out.println("current cols inv " + currentCols);
+                            System.out.println("Dimensiones para inversión: " + currentRows + "x" + currentCols);
                             for (int level = maxLevels; level >= 1; level--) {                           
                                 for (int i = 0; i < image.length; i++) {
                                     for (int j = 0; j < currentCols; j++) {
@@ -211,7 +209,7 @@ public class Main {
                             break;
                         case 2:
                             predictedImage = functions.imagePredictorInv(image);
-                            scanner.nextLine();
+                            System.out.println("Predicted");
                             for (int i = 0; i < predictedImage.length; i++) {
                                 for (int j = 0; j < predictedImage[i].length; j++) {
                                     for (int k = 0; k < predictedImage[i][j].length; k++) {
@@ -243,7 +241,7 @@ public class Main {
                     }
                     System.out.println("Guardando imagen...");
                     functions.SaveFile(image,bytes_sample, signed,"../imatges/ImagenOriginal.raw");
-                    
+                    System.out.println("Imagen guardada!");
                     break;
                 default:
                 System.out.println("Valor incorrecto");
