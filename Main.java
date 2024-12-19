@@ -58,6 +58,7 @@ public class Main {
                     scanner.nextLine();
                     switch (methodChoice) {
                         case 1:
+                            System.out.println("entropia inicial: " + functions.Entropy(image));
                             System.out.print("Cuantos niveles de wavelet quiere hacer? ");
                             int maxLevels = scanner.nextInt();
                             scanner.nextLine();
@@ -95,11 +96,10 @@ public class Main {
                                 }
                                 count++;
                             }
-                            System.out.println("entropia " + functions.Entropy(image));
+                        
                             break;
                         case 2:
                             predictedImage = functions.imagePredictor(image);
-                            scanner.nextLine();
                             for (int i = 0; i < predictedImage.length; i++) {
                                 for (int j = 0; j < predictedImage[i].length; j++) {
                                     for (int k = 0; k < predictedImage[i][j].length; k++) {
@@ -113,7 +113,7 @@ public class Main {
                             scanner.close();
                             break;
                     }
-                    System.out.print("Indica el path dónde quiere guardar la imagen comprimida ");
+                    System.out.print("Indica la ruta dónde quiere guardar la imagen comprimida: ");
                     String zipSavedPath = scanner.nextLine().trim();
                     if (!zipSavedPath.toLowerCase().endsWith(".zip")) {
                         zipSavedPath += ".zip";
@@ -170,10 +170,14 @@ public class Main {
                             int count = 2;
                             int currentRows = image[0].length;
                             int currentCols = image[0][0].length;
+                            System.out.println("current rows pre inv " + currentRows);
+                            System.out.println("current cols pre inv " + currentCols);
                             for (int i = 1; i < maxLevels; i++){
                                 currentRows /= 2;
                                 currentCols /=2;
                             } 
+                            System.out.println("current rows inv " + currentRows);
+                            System.out.println("current cols inv " + currentCols);
                             for (int level = maxLevels; level >= 1; level--) {                           
                                 for (int i = 0; i < image.length; i++) {
                                     for (int j = 0; j < currentCols; j++) {
@@ -202,7 +206,8 @@ public class Main {
                                     }
                                     count++;
                                 }
-                            }            
+                            }
+                            System.out.println("entropia final: " + functions.Entropy(image));            
                             break;
                         case 2:
                             predictedImage = functions.imagePredictorInv(image);
@@ -238,6 +243,7 @@ public class Main {
                     }
                     System.out.println("Guardando imagen...");
                     functions.SaveFile(image,bytes_sample, signed,"../imatges/ImagenOriginal.raw");
+                    
                     break;
                 default:
                 System.out.println("Valor incorrecto");
