@@ -309,7 +309,7 @@ public class Functions {
         System.out.println("Unzipping...");
         File destDir = new File(DestPath);
         byte[] buffer = new byte[1024];
-        String extractedFileName = "";
+        String extractedFileName = ""; 
     
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipImagePath))) {
             ZipEntry zipEntry = zis.getNextEntry();

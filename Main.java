@@ -173,7 +173,7 @@ public class Main {
                             for (int i = 1; i < maxLevels; i++){
                                 currentRows /= 2;
                                 currentCols /=2;
-                            }
+                            } 
                             for (int level = maxLevels; level >= 1; level--) {                           
                                 for (int i = 0; i < image.length; i++) {
                                     for (int j = 0; j < currentCols; j++) {
