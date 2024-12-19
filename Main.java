@@ -160,6 +160,7 @@ public class Main {
                     image = functions.LoadImage(path_file, rows, columns, components, bytes_sample, signed);
                     quantified_image = new int[image.length][image[0].length][image[0][0].length];
                     predictedImage = new int[image.length][image[0].length][image[0][0].length];
+                    System.out.println("entropia inicial: " + functions.Entropy(image));
                     System.out.print("¿Qué método deseas usar?\n1. Wavelet\n2. Predictor: ");
                     methodChoice = scanner.nextInt();
                     scanner.nextLine();
