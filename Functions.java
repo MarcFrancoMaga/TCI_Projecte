@@ -37,7 +37,7 @@ public class Functions {
 
     public void SaveFile(int image_file[][][], int bytes_sample, boolean signed, String path) {
         try(FileOutputStream image_output = new FileOutputStream(path)) {
-            System.out.println("Saving File...");
+            //System.out.println("Saving File...");
             for (int i = 0; i < image_file.length; i++) {
                 for (int j = 0; j < image_file[i].length; j++) {
                     for (int k = 0; k < image_file[i][j].length; k++) {
@@ -53,7 +53,7 @@ public class Functions {
                     }
                 }
             }
-            System.out.println("File saved successfully!");
+            //System.out.println("File saved successfully!");
         } catch (IOException e) {
             System.err.println("Error saving file: " + e.getMessage());
         }
@@ -287,7 +287,7 @@ public class Functions {
     }
 
     public void ZipImage(String imagePath, String zipImagePath) throws IOException {
-        System.out.println("Zipping...");
+        //System.out.println("Zipping...");
         FileOutputStream fos = new FileOutputStream(zipImagePath);
         ZipOutputStream zipOut = new ZipOutputStream(fos);
         File imageToZip = new File(imagePath);
@@ -305,40 +305,44 @@ public class Functions {
         fos.close();
     }
 
-    public void UnzipImage(String zipImagePath, String DestPath) throws IOException {
+    public String UnzipImage(String zipImagePath, String DestPath) throws IOException {
         System.out.println("Unzipping...");
         File destDir = new File(DestPath);
         byte[] buffer = new byte[1024];
-        ZipInputStream zis = new ZipInputStream(new FileInputStream(zipImagePath));
-        ZipEntry zipEntry = zis.getNextEntry();
-        while (zipEntry != null) {
-            File destFile = new File(destDir, zipEntry.getName());
-            String destDirPath = destDir.getCanonicalPath();
-            String destFilePath = destFile.getCanonicalPath();
-            if (!destFilePath.startsWith(destDirPath + File.separator)) {
-                throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
-            }
-            
-            if (zipEntry.isDirectory()) {
-                if (!destFile.isDirectory() && !destFile.mkdirs()) {
-                    throw new IOException("Failed to create directory " + destFile);
-                }
-            } else {
-                File parent = destFile.getParentFile();
-                if (!parent.isDirectory() && !parent.mkdirs()) {
-                    throw new IOException("Failed to create directory " + parent);
-                }
+        String extractedFileName = "";
     
-                FileOutputStream fos = new FileOutputStream(destFile);
-                int len;
-                while ((len = zis.read(buffer)) > 0) {
-                    fos.write(buffer, 0, len);
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipImagePath))) {
+            ZipEntry zipEntry = zis.getNextEntry();
+            while (zipEntry != null) {
+                File destFile = new File(destDir, zipEntry.getName());
+                String destDirPath = destDir.getCanonicalPath();
+                String destFilePath = destFile.getCanonicalPath();
+                
+                if (!destFilePath.startsWith(destDirPath + File.separator)) {
+                    throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
                 }
-                fos.close();
+                
+                if (zipEntry.isDirectory()) {
+                    if (!destFile.isDirectory() && !destFile.mkdirs()) {
+                        throw new IOException("Failed to create directory " + destFile);
+                    }
+                } else {
+                    File parent = destFile.getParentFile();
+                    if (!parent.isDirectory() && !parent.mkdirs()) {
+                        throw new IOException("Failed to create directory " + parent);
+                    }
+        
+                    try (FileOutputStream fos = new FileOutputStream(destFile)) {
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) {
+                            fos.write(buffer, 0, len);
+                        }
+                    }
+                    extractedFileName = zipEntry.getName(); 
+                }
+                zipEntry = zis.getNextEntry();
             }
-            zipEntry = zis.getNextEntry();
         }
-        zis.closeEntry();
-        zis.close();
+        return extractedFileName; 
     }
-}   
+}
