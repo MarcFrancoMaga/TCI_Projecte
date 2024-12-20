@@ -14,7 +14,7 @@ public class Functions {
                 for (int k = 0; k < col; k++) {
                     if(bytes_sample == 1){
                         int data = image_input.read();
-                        image_loaded[i][j][k] = data; 
+                        image_loaded[i][j][k] = signed ? (byte) data : data & 0xFF;
                     }
                     if(bytes_sample == 2){
                         int byte1 = image_input.read();
@@ -23,7 +23,7 @@ public class Functions {
                             throw new IOException("Unexpected end of file");
                         }
                         int data = (byte1 << 8) | (byte2 & 0xFF);
-                        image_loaded[i][j][k] = data; 
+                        image_loaded[i][j][k] = signed ? (short) data : data & 0xFFFF;
 
                     }
                 }
@@ -43,16 +43,20 @@ public class Functions {
                     for (int k = 0; k < image_file[i][j].length; k++) {
                         int value = image_file[i][j][k];
                         if (bytes_sample == 1) {
-                            image_output.write(value & 0xFF);
+                            if (signed) {
+                                image_output.write((byte) value); 
+                            } else {
+                                image_output.write(value & 0xFF);
+                            }
                         } else if (bytes_sample == 2) {
-                            byte byte1 = (byte) ((value >> 8) & 0xFF); 
-                            byte byte2 = (byte) (value & 0xFF);  
+                            byte byte1 = (byte) (value & 0xFF); 
+                            byte byte2 = (byte) ((value >> 8) & 0xFF);  
                             image_output.write(byte1);
                             image_output.write(byte2);
                         }
                     }
                 }
-            }
+            }   
             //System.out.println("File saved successfully!");
         } catch (IOException e) {
             System.err.println("Error saving file: " + e.getMessage());

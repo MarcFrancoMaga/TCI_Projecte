@@ -96,8 +96,6 @@ public class Main {
                                 }
                                 count++;
                             }
-                            System.out.println("current rows post fwd " + currentRows);
-                            System.out.println("current cols post fwd " + currentCols);
                             System.out.println("entropy post fwd" + functions.Entropy(image));
                             break;
                         case 2:
@@ -121,11 +119,11 @@ public class Main {
                         zipSavedPath += ".zip";
                     }
                     System.out.print("Comprimiendo imagen...");
-                    functions.SaveFile(image, 1, false, "../imatges/CompressedImage.raw");
+                    functions.SaveFile(image, 2, true, "../imatges/CompressedImage.raw");
                     functions.ZipImage("../imatges/CompressedImage.raw", zipSavedPath);
                     File originalFile = new File("../imatges/CompressedImage.raw");
                     if (originalFile.exists()) {
-                        originalFile.delete();
+                        //originalFile.delete();
                     } else {
                         System.out.println("La imagen original no existe.");
                     }
@@ -157,7 +155,7 @@ public class Main {
                     signed = Boolean.parseBoolean(arguments[5]);
                     path_file = destPathImage + File.separator + extractedFileName;
                     System.out.println(path_file);
-                    image = functions.LoadImage(path_file, rows, columns, components, bytes_sample, signed);
+                    image = functions.LoadImage(path_file, rows, columns, components, 2, signed);
                     quantified_image = new int[image.length][image[0].length][image[0][0].length];
                     predictedImage = new int[image.length][image[0].length][image[0][0].length];
                     System.out.println("entropia inicial: " + functions.Entropy(image));
@@ -241,7 +239,7 @@ public class Main {
                         }
                     }
                     System.out.println("Guardando imagen...");
-                    functions.SaveFile(image,bytes_sample, signed,"../imatges/ImagenOriginal.raw");
+                    functions.SaveFile(image, bytes_sample, signed,"../imatges/ImagenOriginal.raw");
                     System.out.println("Imagen guardada!");
                     break;
                 default:
